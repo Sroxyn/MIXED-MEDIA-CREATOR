@@ -1,475 +1,500 @@
 <p align="center">
-  <img src="docs/gorseller/logo.png" width="120" alt="MixedMedia Round-Trip Studio">
+  <b>If this app was useful to you, you can buy me a coffee.</b>
 </p>
 
-<a align="center" href="https://www.buymeacoffee.com/mustafa.fbx" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+<p align="center">
+  <a  href="https://www.buymeacoffee.com/mustafa.fbx" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" width="217" height="60" style="height: 60px !important;width: 217px !important;" ></a>
+</p>
+
+---
+
+<p align="center">
+  <img src="docs/gorseller/logo.png" width="120" alt="MixedMedia Round-Trip Studio">
+</p>
 
 <h1 align="center">MixedMedia Round-Trip Studio</h1>
 
 <p align="center">
-  <b>video → kağıt → video</b><br>
-  Videoyu karelere bölüp baskıya hazır sayfalar üretir; siz kağıt üzerinde
-  çalıştıktan sonra sayfaları tarayıp kareleri doğru sırayla videoya çevirir.
+  <b>video → paper → video</b><br>
+  Splits a video into frames and produces print-ready pages; after you have
+  worked on them by hand, it scans the pages back in and turns the frames into
+  video again — in the right order.
 </p>
 
 ---
 
-## İçindekiler
+## Contents
 
-- [Ne yapar?](#ne-yapar)
-- [Kurulum](#kurulum)
-- [İlk açılış](#ilk-açılış)
-- [1. Bölüm — Baskıya hazırlama (IMPORT)](#1-bölüm--baskıya-hazırlama-import)
-- [2. Bölüm — Kağıt üzerinde çalışma ve tarama](#2-bölüm--kağıt-üzerinde-çalışma-ve-tarama)
-- [3. Bölüm — Videoya dönüştürme (EXPORT)](#3-bölüm--videoya-dönüştürme-export)
-- [Özel durumlar](#özel-durumlar)
-- [Sorun giderme](#sorun-giderme)
-- [Komut satırı](#komut-satırı)
-
----
-
-## Ne yapar?
-
-1. Video, seçtiğiniz kare hızında (örneğin 6 fps) tek tek karelere bölünür.
-2. Kareler A4/A3 sayfalara ızgara hâlinde dizilir, baskıya hazır bir PDF çıkar.
-3. Siz kağıt üzerinde çizer, boyar, keser, yapıştırırsınız.
-4. Sayfaları tarayıp uygulamaya verirsiniz.
-5. Her kare bulunur, düzeltilir, kesilir ve **doğru sırayla** videoya çevrilir.
-
-Sıralama hiçbir zaman dosya adına veya tarama sırasına bırakılmaz. Her karenin
-sayfa üzerindeki milimetre koordinatı proje dosyasında saklanır; kağıdın üzerine
-de köşe işaretleri ve bir QR kodu basılır. Sayfaları karışık sırayla, hatta ters
-tarasanız bile uygulama her kareyi yerine oturtur.
+- [What does it do?](#what-does-it-do)
+- [Installation](#installation)
+- [First launch](#first-launch)
+- [Part 1 — Preparing for print (IMPORT)](#part-1--preparing-for-print-import)
+- [Part 2 — Working on paper and scanning](#part-2--working-on-paper-and-scanning)
+- [Part 3 — Turning it back into video (EXPORT)](#part-3--turning-it-back-into-video-export)
+- [Special cases](#special-cases)
+- [Troubleshooting](#troubleshooting)
+- [Command line](#command-line)
 
 ---
 
-## Kurulum
+## What does it do?
 
-### 1. Uygulamayı indirin
+1. The video is split into individual frames at the frame rate you choose
+   (6 fps, for example).
+2. The frames are laid out on A4/A3 pages as a grid, and a print-ready PDF comes
+   out.
+3. You draw, paint, cut and glue on paper.
+4. You scan the pages and hand them back to the app.
+5. Every frame is found, corrected, cropped and turned into video **in the right
+   order**.
 
-Bu deponun **Releases** bölümünden `MixedMedia-windows.zip` dosyasını indirin ve
-istediğiniz bir klasöre açın. Kurulum gerekmez — klasördeki
-**`MixedMedia.exe`** dosyasına çift tıklamanız yeterli.
+The ordering is never left to file names or to the order you scanned in. Each
+frame's millimetre coordinate on the page is stored in the project file, and
+corner markers plus a QR code are printed onto the paper itself. You can scan
+the pages in any order — even upside down — and the app will still put every
+frame back where it belongs.
 
-Klasörde iki program vardır:
+---
 
-| Dosya | Ne işe yarar |
+## Installation
+
+### 1. Download the app
+
+Download `MixedMedia-windows.zip` from this repository's **Releases** section and
+extract it anywhere you like. There is no installer — just double-click
+**`MixedMedia.exe`** in the folder.
+
+The folder contains two programs:
+
+| File | What it is for |
 |---|---|
-| `MixedMedia.exe` | Grafik arayüz — normalde bunu kullanacaksınız |
-| `mm.exe` | Komut satırı aracı — toplu iş ve otomasyon için |
+| `MixedMedia.exe` | The graphical app — this is the one you will normally use |
+| `mm.exe` | Command-line tool — for batch work and automation |
 
-> **Windows SmartScreen uyarısı:** Program imzalı olmadığı için Windows ilk
-> açılışta "Bilinmeyen yayımcı" uyarısı verebilir.
-> *Ek bilgi → Yine de çalıştır* ile geçebilirsiniz.
+> **Windows SmartScreen warning:** the program is not code-signed, so Windows may
+> show an "Unknown publisher" warning the first time you run it.
+> Click *More info → Run anyway* to get past it.
 
-### 2. FFmpeg kurun (zorunlu)
+### 2. Install FFmpeg (required)
 
-Video okuma ve yazma işlerini FFmpeg yapar ve **uygulamanın içinde gelmez**
-(lisansı nedeniyle). Kurmazsanız uygulama açılır ama video ile ilgili hiçbir şey
-çalışmaz; ana ekranın altında kırmızı bir uyarı görürsünüz.
+FFmpeg does the reading and writing of video, and it **does not ship inside the
+app** (because of its licence). Without it the app still opens, but nothing
+video-related works; you will see a red warning at the bottom of the main screen.
 
-En kolay yol — PowerShell'i açıp:
+The easiest way — open PowerShell and run:
 
 ```powershell
 winget install Gyan.FFmpeg
 ```
 
-Kurduktan sonra uygulamayı yeniden başlatın; uyarı kaybolur.
+Restart the app afterwards and the warning disappears.
 
-Kurmak istemiyorsanız [ffmpeg.org](https://ffmpeg.org/download.html) adresinden
-indirip `ffmpeg` klasörünü **`MixedMedia.exe`'nin yanına** bırakabilirsiniz;
-uygulama orayı da arar.
+If you would rather not install it system-wide, download it from
+[ffmpeg.org](https://ffmpeg.org/download.html) and drop the `ffmpeg` folder
+**next to `MixedMedia.exe`** — the app looks there too.
 
-### 3. (İsteğe bağlı) Türkçe karakterler için yazı tipi
+### 3. (Optional) A font for non-ASCII characters
 
-PDF'lerdeki alt bilgi metni için sistemden Unicode destekli bir yazı tipi
-seçilir. Windows'ta Segoe UI zaten vardır, bir şey yapmanız gerekmez.
-
----
-
-## İlk açılış
-
-Uygulamayı ilk çalıştırdığınızda dil sorulur. Seçiminiz hatırlanır ve bir daha
-sorulmaz.
-
-<p align="center">
-  <img src="docs/gorseller/02-dil-secimi.png" width="420" alt="Dil seçme ekranı">
-</p>
-
-Dili sonradan değiştirmek isterseniz ana menünün sağ üstündeki **🌐 Türkçe**
-düğmesine basmanız yeterli — arayüz anında değişir, yeniden başlatmak gerekmez.
-
-### Ana menü
-
-<p align="center">
-  <img src="docs/gorseller/01-ana-menu.png" width="640" alt="Ana menü">
-</p>
-
-Buradan iki şey yapabilirsiniz:
-
-- **Yeni proje** — bir video seçip döngüyü baştan başlatmak.
-  Ortadaki alana bir video dosyası sürükleyip bırakmanız da yeterli.
-- **Proje aç** — daha önce başladığınız bir işe devam etmek.
-  Proje klasörünü sürükleyip bırakabilirsiniz.
-
-Bir proje açıkken alttaki iki büyük düğme etkinleşir:
-
-<p align="center">
-  <img src="docs/gorseller/03-ana-menu-proje-acik.png" width="640" alt="Proje açıkken ana menü">
-</p>
-
-- **Baskıya hazırla (IMPORT)** — video → kağıt yönü
-- **Videoya dönüştür (EXPORT)** — kağıt → video yönü
-
-> Her ayar anında proje klasörüne yazılır. Uygulamayı kapatsanız, hatta
-> bilgisayarı yeniden başlatsanız bile iş kaldığı yerden devam eder.
+For the footer text on the PDFs, a Unicode-capable font is picked from your
+system. Windows already has Segoe UI, so there is nothing for you to do.
 
 ---
 
-## 1. Bölüm — Baskıya hazırlama (IMPORT)
+## First launch
 
-Dört adımlı bir sihirbaz. Her adımda geri dönebilirsiniz.
-
-### Adım 1 — Video
+The first time you run the app it asks for a language. Your choice is remembered
+and you will not be asked again.
 
 <p align="center">
-  <img src="docs/gorseller/04-import-1-video.png" width="720" alt="IMPORT adım 1: video">
+  <img src="docs/gorseller/02-dil-secimi.png" width="420" alt="Language selection screen">
 </p>
 
-Videoyu sürükleyip bırakın, sonra **kare hızını** seçin.
+To change it later, press the **🌐 English** button at the top right of the main
+menu — the interface switches instantly, no restart needed.
 
-**Kare hızı en önemli karardır.** Kaç kare çizeceğinizi bu belirler:
+### Main menu
 
-| Kare hızı | 10 saniyelik video | Sonuç |
+<p align="center">
+  <img src="docs/gorseller/01-ana-menu.png" width="640" alt="Main menu">
+</p>
+
+There are two things you can do from here:
+
+- **New project** — pick a video and start the loop from the beginning.
+  Dropping a video file onto the middle area does the same thing.
+- **Open project** — carry on with work you started earlier.
+  You can drop the project folder onto the app.
+
+With a project open, the two large buttons at the bottom become active:
+
+<p align="center">
+  <img src="docs/gorseller/03-ana-menu-proje-acik.png" width="640" alt="Main menu with a project open">
+</p>
+
+- **Prepare for print (IMPORT)** — the video → paper direction
+- **Turn into video (EXPORT)** — the paper → video direction
+
+> Every setting is written to the project folder as you go. You can close the
+> app, or even restart the computer, and the work carries on from where you left
+> it.
+
+---
+
+## Part 1 — Preparing for print (IMPORT)
+
+A four-step wizard. You can go back at any step.
+
+### Step 1 — Video
+
+<p align="center">
+  <img src="docs/gorseller/04-import-1-video.png" width="720" alt="IMPORT step 1: video">
+</p>
+
+Drag and drop the video, then choose the **frame rate**.
+
+**The frame rate is the most important decision.** It determines how many frames
+you will be drawing:
+
+| Frame rate | A 10-second video | Result |
 |---|---|---|
-| 4 fps | 40 kare | Kesik kesik, "stop motion" hissi — az emek |
-| 6 fps | 60 kare | Klasik el çizimi animasyon temposu (önerilen) |
-| 12 fps | 120 kare | Akıcı ama iki katı emek |
-| 24 fps | 240 kare | Çok akıcı, çok fazla iş |
+| 4 fps | 40 frames | Choppy, "stop motion" feel — least work |
+| 6 fps | 60 frames | Classic hand-drawn animation pace (recommended) |
+| 12 fps | 120 frames | Smooth, but twice the work |
+| 24 fps | 240 frames | Very smooth, a great deal of work |
 
-Alttaki satır seçiminizin sonucunu anında gösterir:
-`→ 48 kare · ~8 sn · 12 sayfa A4`. **Kaç sayfa basacağınızı buradan görün.**
+The line underneath shows the result of your choice immediately:
+`→ 48 frames · ~8 s · 12 pages of A4`. **This is where you see how many pages you
+will be printing.**
 
-> **Kareleri küçült** alanı, çıkarılan karelerin genişliğini sınırlar. Boş
-> bırakın (`Orijinal`) — bu alan yalnızca disk alanından tasarruf etmek içindir,
-> baskı kalitesini artırmaz. Kaynak videonuzdan **büyük** bir değer yazmayın,
-> görüntüyü gereksiz yere şişirir.
+> The **Shrink frames** field limits the width of the extracted frames. Leave it
+> empty (`Original`) — that field only exists to save disk space, it does not
+> improve print quality. Do not enter a value **larger** than your source video;
+> that only bloats the images for nothing.
 
-**İleri**'ye bastığınızda kareler çıkarılır. Uzun videolarda bu biraz sürer;
-ilerleme çubuğundan takip edebilir, istediğiniz an iptal edebilirsiniz.
+When you press **Next**, the frames are extracted. On long videos this takes a
+while; you can follow the progress bar and cancel at any point.
 
-### Adım 2 — Görünüm
-
-<p align="center">
-  <img src="docs/gorseller/05-import-2-gorunum.png" width="720" alt="IMPORT adım 2: görünüm">
-</p>
-
-Kağıda **ne kadar koyu** basılacağını burada ayarlarsınız. Sağdaki önizleme
-gerçek bir kare üzerinde anında güncellenir.
-
-Buradaki asıl fikir şu: siz basılanın **üstüne** çizeceksiniz. Baskı ne kadar
-açık olursa üstüne çizmek o kadar kolay, ama hareketi takip etmek o kadar zor
-olur. Dengeyi kendi çalışma tarzınıza göre kurun.
-
-| Ayar | Ne yapar |
-|---|---|
-| **İşleme modu** | Orijinal (renkli), Gri ton, Çizgi sanatı, Yarım ton |
-| **Baskı yoğunluğu** | En etkili ayar. Düşürdükçe baskı soluklaşır |
-| **Kontrast / Parlaklık / Gama** | İnce ayar |
-
-Önerilen başlangıç: **Gri ton** + **%40–55 yoğunluk**. Bir sayfa deneme basıp
-kendi yazıcınıza göre ayarlayın.
-
-### Adım 3 — Sayfa düzeni
+### Step 2 — Look
 
 <p align="center">
-  <img src="docs/gorseller/06-import-3-duzen.png" width="720" alt="IMPORT adım 3: sayfa düzeni">
+  <img src="docs/gorseller/05-import-2-gorunum.png" width="720" alt="IMPORT step 2: look">
 </p>
 
-Sağdaki önizleme **gerçekten basılacak sayfanın kendisidir** — ayrı bir çizim
-yolu yoktur, ne görüyorsanız o basılır. Sayfalar arasında `‹` `›` ile gezinin.
+This is where you set **how dark** the print will be. The preview on the right
+updates instantly on a real frame.
 
-| Ayar | Açıklama |
+The idea behind it: you are going to draw **on top of** what gets printed. The
+lighter the print, the easier it is to draw over — but the harder it is to follow
+the motion. Find the balance that suits how you work.
+
+| Setting | What it does |
 |---|---|
-| **Kağıt / Yön** | A4, A3, Letter · Dikey veya Yatay |
-| **Izgara → Otomatik** | Sayfa başına kaç kare istediğinizi söylersiniz; sistem en çok basılı alanı veren sütun×satır düzenini ve yönü kendi seçer |
-| **Izgara → Manuel** | Sütun ve satırı kendiniz girersiniz |
-| **Kenar boşluğu / Hücre arası** | Kesmek için pay bırakır |
-| **Görüntü** | *Sığdır* kareyi tam gösterir, *Doldur* hücreyi doldurur (kenarlardan kırpar) |
-| **Kesim** | Köşe işaretleri, ince çerçeve veya hiçbiri |
+| **Processing mode** | Original (colour), Greyscale, Line art, Halftone |
+| **Print density** | The most effective setting. Lower it and the print fades |
+| **Contrast / Brightness / Gamma** | Fine tuning |
 
-Sol alttaki özet iki şeyi söyler:
+A good starting point: **Greyscale** + **40–55% density**. Print one test page
+and adjust to your own printer.
 
-- **Kaç sayfa çıkacağı** ve hücre ölçüleri.
-- **Efektif DPI** — kareler kağıda kaç DPI ile basılacak. Bu sayı sarıya
-  dönerse ("baskıda yumuşak görünecek") ya sayfa başına daha az kare seçin ya da
-  daha büyük kağıda geçin.
-
-#### Sayfa üzerindeki işaretler
-
-Bu kutudaki dört seçenek uygulamanın kareleri geri bulmasını sağlar:
-
-| İşaret | Ne işe yarar |
-|---|---|
-| **Köşe işaretleri ve sayfa QR'ı** | Sayfayı tanır, eğriliği ve perspektifi düzeltir |
-| **Hücre başına mikro-marker** | Her karenin kimliğini taşır; kesip ayırsanız bile kaybolmaz |
-| **Gri skala kalibrasyon şeridi** | Tarayıcı/yazıcı renk kaymasını düzeltir |
-| **Alt bilgi metni** | Proje adı, fps, tarih, sayfa numarası |
-
-> ⚠️ **Bunları kapatmayın.** Estetik gerekçeyle kapatabilirsiniz, ama o zaman
-> uygulama taramaları otomatik hizalayamaz ve her sayfanın dört köşesini elle
-> göstermeniz gerekir. Kapattığınızda zaten sarı bir uyarı çıkar.
-
-### Adım 4 — Çıktı
+### Step 3 — Page layout
 
 <p align="center">
-  <img src="docs/gorseller/07-import-4-cikti.png" width="720" alt="IMPORT adım 4: çıktı">
+  <img src="docs/gorseller/06-import-3-duzen.png" width="720" alt="IMPORT step 3: page layout">
 </p>
 
-**Biçim** olarak *PDF (tek belge)* seçin — matbaaya veya yazıcıya vereceğiniz
-budur. Bazı baskıcılar sayfa başına ayrı dosya ister; o zaman *Sayfa başına PNG*
-seçip çözünürlüğü belirleyin.
+The preview on the right **is the page that will actually be printed** — there is
+no separate drawing path, what you see is what comes out. Move between pages with
+`‹` and `›`.
 
-**Üret**'e basın, bitince **Klasörü aç** ile dosyaya ulaşın.
+| Setting | Description |
+|---|---|
+| **Paper / Orientation** | A4, A3, Letter · Portrait or Landscape |
+| **Grid → Automatic** | You say how many frames you want per page; the system picks the columns×rows arrangement and the orientation that give the most printed area |
+| **Grid → Manual** | You enter the columns and rows yourself |
+| **Margin / Gutter** | Leaves room for cutting |
+| **Image** | *Fit* shows the whole frame, *Fill* fills the cell (cropping the edges) |
+| **Cut marks** | Corner marks, a hairline frame, or none |
 
-#### Yazdırırken dikkat
+The summary at the bottom left tells you two things:
 
-Bu en kritik noktadır:
+- **How many pages** will come out, and the cell dimensions.
+- **Effective DPI** — the resolution the frames will be printed at. If this
+  number turns amber ("this will look soft in print"), either choose fewer frames
+  per page or move to a larger paper size.
 
-> 🖨️ **Yazıcı ayarlarında ölçekleme KAPALI olmalı.**
-> "Sayfaya sığdır", "Fit to page", "Shrink oversized pages" gibi seçenekler
-> **kapalı**, ölçek **%100 / Gerçek boyut (Actual size)** olmalıdır.
+#### Marks on the page
 
-Yazıcı sayfayı %97'ye küçültürse kağıttaki ölçüler projedeki ölçülerle
-uyuşmaz ve kareler yanlış kesilir. Bir sayfa deneme basıp cetvelle ölçmek
-iyi bir alışkanlıktır.
+The four options in this box are what let the app find the frames again:
+
+| Mark | What it is for |
+|---|---|
+| **Corner markers and page QR** | Identifies the page and corrects skew and perspective |
+| **Micro-marker per cell** | Carries each frame's identity; survives even if you cut the frames apart |
+| **Greyscale calibration strip** | Corrects scanner/printer colour shift |
+| **Footer text** | Project name, fps, date, page number |
+
+> ⚠️ **Do not turn these off.** You can, for aesthetic reasons, but then the app
+> cannot align your scans automatically and you will have to mark the four
+> corners of every page by hand. The app already shows an amber warning when you
+> switch them off.
+
+### Step 4 — Output
+
+<p align="center">
+  <img src="docs/gorseller/07-import-4-cikti.png" width="720" alt="IMPORT step 4: output">
+</p>
+
+Choose *PDF (single document)* as the **Format** — that is what you hand to the
+printer or print shop. Some print shops want one file per page; in that case
+choose *One PNG per page* and set the resolution.
+
+Press **Generate**, and when it finishes use **Open folder** to get to the file.
+
+#### When you print
+
+This is the most critical point:
+
+> 🖨️ **Scaling must be OFF in the printer settings.**
+> Options like "Fit to page" or "Shrink oversized pages" must be **off**, and the
+> scale must be **100% / Actual size**.
+
+If the printer shrinks the page to 97%, the measurements on the paper no longer
+match the ones in the project and the frames get cropped in the wrong places.
+Printing one test page and checking it with a ruler is a good habit.
 
 ---
 
-## 2. Bölüm — Kağıt üzerinde çalışma ve tarama
+## Part 2 — Working on paper and scanning
 
-### Çalışırken
+### While you work
 
-- **Köşe işaretlerini ve QR'ı boyamayın.** Kareler üzerinde istediğinizi
-  yapabilirsiniz, ama sayfanın köşelerindeki siyah kareler ile sağ üstteki QR
-  kodu okunur kalmalı. Alt kenardaki gri şerit de öyle.
-- Kareleri kesip ayırmak isterseniz sorun değil — her karenin altındaki küçük
-  işaret kimliğini taşır. Ayrıntı için
-  [Kesilmiş kart modu](#kesilmiş-kartla-çalışmak).
+- **Do not paint over the corner markers or the QR code.** Do whatever you like
+  on the frames themselves, but the black squares in the page corners and the QR
+  code at the top right have to stay readable. The same goes for the grey strip
+  along the bottom edge.
+- If you want to cut the frames apart, that is fine — the small marker under each
+  frame carries its identity. See
+  [Working with cut-out cards](#working-with-cut-out-cards).
 
-### Tararken
+### While you scan
 
-| Konu | Öneri |
+| Topic | Recommendation |
 |---|---|
-| **Çözünürlük** | **300–600 DPI** yeterlidir. Daha yükseği kaliteyi artırmaz, sadece yavaşlatır |
-| **Renk** | Renkli tarayın (gri tonlamaya uygulama kendi karar verir) |
-| **Çerçeve** | **Sayfanın tamamı kadraja girsin.** Kenarları kırpılan taramada köşe işaretleri kaybolur ve hizalama yapılamaz |
-| **Otomatik düzeltme** | Tarayıcının "otomatik kırp", "otomatik düzelt", "arka planı temizle" seçeneklerini **kapatın** — uygulama bu işi zaten ve daha doğru yapıyor |
-| **Biçim** | PNG veya TIFF tercih edin; JPEG de olur. Çok sayfalı PDF de kabul edilir |
-| **Sıra** | **Önemsiz.** Sayfaları karışık sırayla, hatta ters tarayabilirsiniz |
+| **Resolution** | **300–600 DPI** is plenty. Higher does not improve quality, it only slows things down |
+| **Colour** | Scan in colour (the app decides about greyscale itself) |
+| **Framing** | **The whole page must be in frame.** If the edges get cropped, the corner markers are lost and alignment becomes impossible |
+| **Auto-correction** | Turn **off** your scanner's "auto crop", "auto straighten" and "clean background" options — the app already does this, and does it better |
+| **Format** | Prefer PNG or TIFF; JPEG works too. Multi-page PDFs are also accepted |
+| **Order** | **Does not matter.** You can scan the pages in any order, even upside down |
 
 ---
 
-## 3. Bölüm — Videoya dönüştürme (EXPORT)
+## Part 3 — Turning it back into video (EXPORT)
 
-Yine dört adım.
+Four steps again.
 
-### Adım 1 — Proje
-
-<p align="center">
-  <img src="docs/gorseller/08-export-1-proje.png" width="720" alt="EXPORT adım 1: proje">
-</p>
-
-Taramaları **hangi projeden** çıktığını söylersiniz. Ana menüden bir proje açıp
-geldiyseniz bu adım zaten doludur.
-
-Bu adım şart, çünkü uygulama hiçbir şeyi tahmin etmez: her karenin sayfadaki
-yerini ve sırasını proje dosyasından okur.
-
-### Adım 2 — Taramalar
+### Step 1 — Project
 
 <p align="center">
-  <img src="docs/gorseller/09-export-2-taramalar.png" width="720" alt="EXPORT adım 2: taramalar">
+  <img src="docs/gorseller/08-export-1-proje.png" width="720" alt="EXPORT step 1: project">
 </p>
 
-Taradığınız dosyaları sürükleyip bırakın (tek tek görüntü, bir klasör veya çok
-sayfalı PDF olabilir), sonra **Taramaları işle**'ye basın.
+You tell the app **which project** the scans came from. If you arrived here with
+a project already open from the main menu, this step is filled in for you.
 
-Tablodaki her satır bir taramadır:
+This step is essential, because the app guesses nothing: it reads each frame's
+position on the page and its place in the sequence from the project file.
 
-| Sütun | Anlamı |
+### Step 2 — Scans
+
+<p align="center">
+  <img src="docs/gorseller/09-export-2-taramalar.png" width="720" alt="EXPORT step 2: scans">
+</p>
+
+Drag and drop your scanned files (individual images, a folder, or a multi-page
+PDF), then press **Process scans**.
+
+Each row in the table is one scan:
+
+| Column | Meaning |
 |---|---|
-| **Durum** | 🟢 *iyi* · 🟡 *orta* / *zayıf* · 🔴 *okunamadı* |
-| **Sayfa** | Hangi sayfa olduğu. QR okunmadıysa buradan elle seçebilirsiniz |
-| **Yöntem** | `corners4` = dört köşe okundu (en iyi), `cell_markers` = yalnızca hücre işaretleriyle hizalandı |
-| **İşaret** | Kaç köşe + kaç hücre işareti bulundu |
-| **Not** | Uyarılar. Örnekteki *"Sayfa ters taranmış; işaretlere göre otomatik döndürüldü"* gibi |
+| **Status** | 🟢 *good* · 🟡 *fair* / *weak* · 🔴 *unreadable* |
+| **Page** | Which page it is. If the QR could not be read, you can pick it here by hand |
+| **Method** | `corners4` = all four corners were read (best), `cell_markers` = aligned using the cell markers only |
+| **Markers** | How many corner + how many cell markers were found |
+| **Note** | Warnings, such as the *"The page was scanned upside down; it was rotated automatically using the markers"* in the example |
 
-En altta **kaç kare çıkarıldığı** yazar. Hepsi bulunduysa devam edin.
+At the bottom you see **how many frames were extracted**. If they were all found,
+carry on.
 
-> **Kesim payı** kaydırıcısı hücrelerin nereden kesileceğini ayarlar.
-> Negatif değer kağıt kenarından içeri kaçar (varsayılan −0.5 mm, kenar
-> çizgisinin görüntüye karışmasını engeller). Hücre dışına taşan çizimlerinizin
-> de alınmasını istiyorsanız pozitif bir değer verin.
+> The **Bleed** slider adjusts where the cells get cropped. A negative value
+> stays inside the paper edge (the default is −0.5 mm, which keeps the edge line
+> out of the image). If you want drawing that spills outside the cell to be
+> included as well, use a positive value.
 
-### Adım 3 — Kareler
-
-<p align="center">
-  <img src="docs/gorseller/10-export-3-kareler.png" width="720" alt="EXPORT adım 3: kareler">
-</p>
-
-Üstteki şerit her kareyi renk koduyla gösterir:
-🟢 bulundu · 🟡 düşük güven · 🔴 eksik.
-
-Sağdaki **Oynat** düğmesi animasyonu gerçek hızında oynatır — dosyaya yazılacak
-olanın birebir aynısını izlersiniz.
-
-**Eksik kareler** — bir kare bulunamazsa ne yapılacağını seçersiniz:
-
-| Seçenek | Sonuç |
-|---|---|
-| **Öncekini uzat** | Bir önceki kare iki kare süre kalır (en doğal, önerilen) |
-| **Atla** | Kare hiç yazılmaz — video kısalır, tempo değişir |
-| **Ara geçiş üret** | Komşu karelerden bir ara görüntü hesaplanır |
-| **Kırmızı kare** | Eksik yer kırmızı basılır — hangi karenin eksik olduğunu görmek için |
-
-**Stabilizasyon** — kağıdın tarayıcıda her seferinde birkaç milimetre farklı
-durmasından kaynaklanan titremeyi siler.
-
-> Mixed media'da hafif titreşim genelde **istenen** bir estetiktir. Ham hâlini
-> korumak isterseniz **0** yapın. Kaynak videosu çok hareketli işlerde de düşük
-> bir değer daha güvenlidir.
-
-### Adım 4 — Video
+### Step 3 — Frames
 
 <p align="center">
-  <img src="docs/gorseller/11-export-4-video.png" width="720" alt="EXPORT adım 4: video">
+  <img src="docs/gorseller/10-export-3-kareler.png" width="720" alt="EXPORT step 3: frames">
 </p>
 
-| Ayar | Açıklama |
+The strip at the top shows every frame with a colour code:
+🟢 found · 🟡 low confidence · 🔴 missing.
+
+The **Play** button on the right plays the animation at its real speed — you are
+watching exactly what will be written to the file.
+
+**Missing frames** — you choose what happens when a frame cannot be found:
+
+| Option | Result |
 |---|---|
-| **Kare hızı** | Videonun oynatma hızı |
-| **Çözünürlük** | Varsayılan olarak kaynak videonun boyutu |
-| **Kodek** | *H.264* → paylaşmak için · *ProRes 422 HQ* → montaja devam edecekseniz · *PNG sekansı* → kare kare dosya |
-| **Orijinal sesi yeniden ekle** | Kaynak videonun sesini geri koyar |
+| **Hold previous** | The previous frame stays on screen for two frames (the most natural, recommended) |
+| **Skip** | The frame is not written at all — the video gets shorter and the timing changes |
+| **Interpolate** | An in-between image is computed from the neighbouring frames |
+| **Red frame** | The gap is printed in red — useful for seeing which frame is missing |
 
-> ⏱️ **Hız uyarısı.** Kareleri 6 fps'te çıkarıp videoyu 12 fps'te verirseniz
-> hareket iki kat hızlanır. İki değer farklıysa uygulama sarı bir uyarıyla
-> "hareket **2×** hızlanacak" der. Bunu bilerek yapıyorsanız sorun yok.
+**Stabilisation** — removes the jitter caused by the paper sitting a few
+millimetres differently on the scanner each time.
 
-**Dışa aktar**'a basın. Bitince **Klasörü aç** ile videoya ulaşın.
+> In mixed media a slight jitter is usually a **wanted** look. Set it to **0** to
+> keep the raw result. A low value is also safer when the source video moves a
+> lot.
 
-🎉 Döngü tamamlandı.
+### Step 4 — Video
+
+<p align="center">
+  <img src="docs/gorseller/11-export-4-video.png" width="720" alt="EXPORT step 4: video">
+</p>
+
+| Setting | Description |
+|---|---|
+| **Frame rate** | The playback speed of the video |
+| **Resolution** | Defaults to the size of the source video |
+| **Codec** | *H.264* → for sharing · *ProRes 422 HQ* → if you are taking it back into an editor · *PNG sequence* → frame-by-frame files |
+| **Re-attach the original audio** | Puts the source video's audio back |
+
+> ⏱️ **Speed warning.** If you extracted frames at 6 fps and export the video at
+> 12 fps, the motion runs twice as fast. When the two values differ, the app says
+> so with an amber warning: "the motion will be **2×** faster". If you are doing
+> it on purpose, there is no problem.
+
+Press **Export**. When it finishes, use **Open folder** to get to the video.
+
+🎉 The loop is complete.
 
 ---
 
-## Özel durumlar
+## Special cases
 
-### Kesilmiş kartla çalışmak
+### Working with cut-out cards
 
-Kareleri kesip ayrı ayrı çalıştıysanız (kolaj, farklı zeminlere yapıştırma vb.)
-kartları tarayıcıya dağınık şekilde koyup tarayabilirsiniz. Her kartın altındaki
-mikro-marker kimliğini taşır; uygulama sayfayı bulamayınca kendiliğinden kart
-moduna geçer.
+If you cut the frames apart and worked on them separately (collage, gluing them
+onto different surfaces, and so on), you can lay the cards on the scanner in any
+arrangement and scan them. The micro-marker under each card carries its identity;
+when the app cannot find a page, it switches to card mode by itself.
 
-Dikkat edilecek tek şey: **kartların altındaki küçük kareyi kesmeyin.** Kesim
-işaretlerinin dışından keserseniz zaten sorun olmaz.
+The one thing to watch out for: **do not cut off the small square under the
+cards.** Cutting outside the cut marks keeps you safe.
 
-### İşaretsiz basıp elle hizalamak
+### Printing without markers and aligning by hand
 
-İşaretleri estetik gerekçeyle kapattıysanız otomatik tespit çalışmaz. Bu durumda
-**Taramalar** adımında tablodan bir satır seçip **Seçili sayfayı elle hizala…**
-düğmesine basın. Açılan pencerede sayfanın dört köşesini sürükleyerek
-gösterirsiniz; ızgara projedeki ölçülerden üstüne bindirilir.
+If you turned the markers off for aesthetic reasons, automatic detection will not
+work. In that case, select a row in the table on the **Scans** step and press
+**Align selected page by hand…**. In the window that opens you drag to mark the
+four corners of the page; the grid is overlaid using the project's measurements.
 
-Baskı kağıda kaymış oturduysa alttaki **Izgarayı yatay/dikey kaydır**
-kaydırıcılarıyla milimetre milimetre düzeltebilirsiniz.
+If the print sat off-centre on the paper, you can correct it millimetre by
+millimetre with the **Shift grid horizontally/vertically** sliders underneath.
 
-**Bu hizalamayı sonraki taramalara da uygula** kutusu işaretliyse aynı köşeler
-sonraki sayfalara da uygulanır — tarayıcıda kağıt genelde aynı yere konduğu için
-bu çoğu zaman işe yarar ve her sayfayı baştan işaretlemekten kurtarır.
+If **Apply this alignment to the following scans too** is ticked, the same
+corners are applied to the following pages as well — the paper usually sits in
+roughly the same place on the scanner, so this often works and saves you from
+marking every page from scratch.
 
 ---
 
-## Sorun giderme
+## Troubleshooting
 
 <table>
-<tr><th align="left">Belirti</th><th align="left">Nedeni ve çözümü</th></tr>
+<tr><th align="left">Symptom</th><th align="left">Cause and fix</th></tr>
 
-<tr><td><b>"FFmpeg bulunamadı"</b> — ana ekranda kırmızı uyarı</td>
-<td>FFmpeg kurulu değil. <a href="#2-ffmpeg-kurun-zorunlu">Kurulum bölümüne</a>
-bakın. Kurduktan sonra uygulamayı yeniden başlatın.</td></tr>
+<tr><td><b>"FFmpeg was not found"</b> — red warning on the main screen</td>
+<td>FFmpeg is not installed. See the
+<a href="#2-install-ffmpeg-required">installation section</a>.
+Restart the app once you have installed it.</td></tr>
 
-<tr><td><b>"Köşe işaretleri bulunamadı"</b></td>
-<td>Büyük olasılıkla tarama sayfanın kenarlarını kırpmış. Sayfanın tamamı
-kadraja girecek şekilde yeniden tarayın. Tarayıcının otomatik kırpma ayarını
-kapatın. Kareleri kesip ayırdıysanız zaten kart modu devreye girmeli.</td></tr>
+<tr><td><b>"No corner markers were found"</b></td>
+<td>Most likely the scan cropped the edges of the page. Rescan with the whole
+page in frame, and turn off your scanner's auto-crop setting. If you cut the
+frames apart, card mode should take over instead.</td></tr>
 
-<tr><td><b>"Sayfa QR'ı okunamadı"</b></td>
-<td>Genelde önemsiz — uygulama sayfa numarasını tarama sırasından çıkarır.
-Yanlış eşleşirse <b>Taramalar</b> tablosundaki <b>Sayfa</b> sütunundan doğru
-numarayı elle seçip yeniden işleyin.</td></tr>
+<tr><td><b>"The page QR could not be read"</b></td>
+<td>Usually harmless — the app infers the page number from the scan order. If it
+matches the wrong page, pick the correct number by hand in the <b>Page</b> column
+of the <b>Scans</b> table and process again.</td></tr>
 
-<tr><td><b>"Sayfa düzeni, bu sayfalar basıldıktan sonra değişmiş"</b></td>
-<td>PDF'i bastıktan sonra ızgara ayarlarını değiştirmişsiniz. Kağıttaki kareler
-artık projedeki koordinatlara uymuyor. Ya yerleşimi baskıdaki hâline geri alın,
-ya da güncel yerleşimle yeni bir PDF üretip yeniden bastırın.</td></tr>
+<tr><td><b>"The page layout changed after these pages were printed"</b></td>
+<td>You changed the grid settings after printing the PDF. The cells on the paper
+no longer match the coordinates in the project. Either revert the layout to how
+it was printed, or generate and print a new PDF with the current layout.</td></tr>
 
-<tr><td><b>Kareler yanlış yerden kesilmiş</b></td>
-<td>Yazıcı sayfayı ölçeklemiş olabilir. Yazdırırken ölçeğin <b>%100 / Gerçek
-boyut</b> olduğundan emin olun.</td></tr>
+<tr><td><b>Frames are cropped in the wrong places</b></td>
+<td>The printer may have scaled the page. Make sure the scale is <b>100% /
+Actual size</b> when printing.</td></tr>
 
-<tr><td><b>Video kenarlarından kayıyor / titriyor</b></td>
-<td><b>Kareler</b> adımında <b>Stabilizasyon</b>'u düşürün veya <b>0</b> yapın.
-Kaynak videosu çok hareketli işlerde stabilizasyon faydadan çok zarar
-verebilir.</td></tr>
+<tr><td><b>The video drifts or shakes at the edges</b></td>
+<td>Lower <b>Stabilisation</b> on the <b>Frames</b> step, or set it to <b>0</b>.
+On work with a very mobile source video, stabilisation can do more harm than
+good.</td></tr>
 
-<tr><td><b>Baskı çok soluk veya çok koyu</b></td>
-<td><b>Görünüm</b> adımındaki <b>Baskı yoğunluğu</b>'nu ayarlayın. Her yazıcı
-farklıdır; bir sayfa deneme basmakta fayda var.</td></tr>
+<tr><td><b>The print is too faint or too dark</b></td>
+<td>Adjust <b>Print density</b> on the <b>Look</b> step. Every printer is
+different; it is worth printing one test page.</td></tr>
 
-<tr><td><b>Taramadan çıkan kareler kalitesiz</b></td>
-<td>Taramayı 300–600 DPI yapın ve tarayıcının otomatik düzeltme seçeneklerini
-kapatın. Kalibrasyon şeridini basılı bıraktığınızdan emin olun — renk kaymasını
-o düzeltiyor.</td></tr>
+<tr><td><b>The frames extracted from the scans look poor</b></td>
+<td>Scan at 300–600 DPI and turn off your scanner's auto-correction options. Make
+sure you left the calibration strip printed — that is what corrects the colour
+shift.</td></tr>
 
-<tr><td><b>Arayüz İngilizce/Türkçe kaldı</b></td>
-<td>Ana menü sağ üstündeki 🌐 düğmesinden değiştirin. Değişiklik anında
-uygulanır.</td></tr>
+<tr><td><b>The interface is stuck in the wrong language</b></td>
+<td>Change it with the 🌐 button at the top right of the main menu. The change is
+applied instantly.</td></tr>
 </table>
 
 ---
 
-## Komut satırı
+## Command line
 
-Aynı işlerin tamamı `mm.exe` ile de yapılabilir — çok sayıda projeyi toplu
-işlemek veya betik yazmak için kullanışlıdır.
+Everything can also be done with `mm.exe` — handy for processing many projects at
+once or for scripting.
 
-Uygulamayı hiç video hazırlamadan denemek isterseniz, örnek bir proje kurup
-döngünün tamamını çalıştırabilirsiniz:
+If you want to try the app without preparing a video at all, you can set up an
+example project and run the whole loop:
 
 ```powershell
-mm example ornek --frames 8
-mm ingest ornek/scans -p ornek
-mm video -p ornek
+mm example demo --frames 8
+mm ingest demo/scans -p demo
+mm video -p demo
 ```
 
-Bu üç komut sonunda `ornek/out/` klasöründe hem baskı PDF'i hem de video olur.
+After these three commands, `demo/out/` contains both the print PDF and the
+video.
 
-Diğer komutlar için:
+For the other commands:
 
 ```powershell
 mm --help
 ```
 
-> Komut satırı arayüzü şimdilik yalnızca Türkçedir.
+> The command-line interface is currently Turkish only.
 
 ---
 
-## Bilinen sınırlar
+## Known limitations
 
-- Arayüz **Türkçe** ve **İngilizce**; `mm.exe` yalnızca Türkçe.
-- FFmpeg uygulamayla birlikte gelmez, ayrıca kurulmalıdır.
-- Program dijital olarak imzalı değildir; Windows ilk açılışta uyarı verir.
-- Yalnızca Windows derlemesi hazırdır. Kaynaktan çalıştırma macOS ve Linux'ta da
-  destekleniyor (bkz. [README.md](README.md)).
+- The graphical interface is available in **Turkish** and **English**; `mm.exe`
+  is Turkish only.
+- FFmpeg does not ship with the app and has to be installed separately.
+- The program is not code-signed, so Windows shows a warning on first launch.
+- Only a Windows build is provided. Running from source is supported on macOS and
+  Linux as well.
