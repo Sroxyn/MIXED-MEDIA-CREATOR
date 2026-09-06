@@ -2,7 +2,7 @@
   <img src="docs/gorseller/logo.png" width="120" alt="MixedMedia Round-Trip Studio">
 </p>
 
-<a href="https://www.buymeacoffee.com/mustafa.fbx" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+<a align="center" href="https://www.buymeacoffee.com/mustafa.fbx" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
 <h1 align="center">MixedMedia Round-Trip Studio</h1>
 
